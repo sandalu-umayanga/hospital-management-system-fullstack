@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
 
     @Autowired
+    private com.backend.service.AdminService adminService;
+
+    @Autowired
     private ResponseDto responseDto;
 
     @Autowired
@@ -20,18 +23,27 @@ public class AdminController {
 
     @PostMapping("/loginAdmin")
     public ResponseEntity<ResponseDto> loginAdmin(@RequestBody LoginDto loginDto) {
-        // Hardcoded admin for simplicity, or could be expanded to use database
-        if ("admin@hospital.com".equals(loginDto.getEmail()) && "Admin@123".equals(loginDto.getPassword())) {
-            responseDto.setCode("10");
-            responseDto.setMessage("Admin logged in successfully");
-            responseDto.setData(loginDto);
-            responseDto.setToken(jwtUtils.generateToken(loginDto.getEmail(), "ADMIN"));
-            return new ResponseEntity<>(responseDto, HttpStatus.ACCEPTED);
-        } else {
-            responseDto.setCode("03");
-            responseDto.setMessage("Invalid admin credentials");
-            responseDto.setData(null);
-            return new ResponseEntity<>(responseDto, HttpStatus.UNAUTHORIZED);
+        try {
+            String res = adminService.loginAdmin(loginDto);
+            if (res.equals("10")) {
+                responseDto.setCode("10");
+                responseDto.setMessage("Admin logged in successfully");
+                responseDto.setData(adminService.findByEmail(loginDto.getEmail()));
+                responseDto.setToken(jwtUtils.generateToken(loginDto.getEmail(), "ADMIN"));
+                return new ResponseEntity<>(responseDto, HttpStatus.ACCEPTED);
+            } else if (res.equals("11")) {
+                responseDto.setCode("11");
+                responseDto.setMessage("Invalid password");
+                return new ResponseEntity<>(responseDto, HttpStatus.UNAUTHORIZED);
+            } else {
+                responseDto.setCode("03");
+                responseDto.setMessage("Admin not found");
+                return new ResponseEntity<>(responseDto, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            responseDto.setCode("000");
+            responseDto.setMessage("Error occurred");
+            return new ResponseEntity<>(responseDto, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
