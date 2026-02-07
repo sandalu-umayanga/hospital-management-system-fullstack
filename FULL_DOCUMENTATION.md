@@ -92,8 +92,9 @@ FLUSH PRIVILEGES;
 
 ### Backend Setup
 1. Navigate to `backend/`.
-2. Run `./mvnw spring-boot:run`.
-3. The server runs on `http://localhost:8080`.
+2. Create a `.env` file based on `.env.example` and fill in your credentials.
+3. Run `./mvnw spring-boot:run`.
+4. The server runs on `http://localhost:8080`.
 
 ### Frontend Setup
 1. Navigate to `frontend/`.
