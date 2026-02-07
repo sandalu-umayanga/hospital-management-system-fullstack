@@ -25,6 +25,7 @@ public class DataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        System.out.println("DataSeeder running...");
         if (adminRepo.count() == 0) {
             Admin admin = new Admin();
             admin.setEmail(adminEmail);
